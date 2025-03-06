@@ -18,10 +18,9 @@ El entrenamiento de una PINN implica definir una ecuación diferencial como part
 ### 3. Métodos Implementados en PINNs
 Se han desarrollado dos enfoques principales para la implementación de PINNs:
 1. **Incorporación Directa de la Ecuación Diferencial**: Se integra la ecuación diferencial y las condiciones de frontera en la función de pérdida. La red neuronal se entrena minimizando esta función.
+
 $$
-\mathcal{L}(u_{NN}) = \frac{1}{N} \sum_{i=1}^{N} \left( -\Delta u_{NN}(x_i) + \alpha u_{NN}(x_i) - f(x_i) \right)^2
-+ \lambda_1 \left( u_{NN}(0) - g(0) \right)^2
-+ \lambda_2 \left( u_{NN}(1) - g(1) \right)^2
+\mathcal{L}(u_{NN}) = \frac{1}{N} \sum_{i=1}^{N} \left( -\Delta u_{NN}(x_i) + \alpha u_{NN}(x_i) - f(x_i) \right)^2+ \lambda_1 \left( u_{NN}(0) - g(0) \right)^2 + \lambda_2 \left( u_{NN}(1) - g(1) \right)^2
 $$
 
 En donde $\lambda_1$ y $\lambda_2$ son parámetros.
@@ -113,8 +112,31 @@ $$
 $$
 
 
-**Experimentación y Optimización de Hiperparámetros**  
-Se realizaron **30 experimentos** con diferentes configuraciones de hiperparámetros para analizar su impacto en la precisión del modelo.  
+**Optimización de Hiperparámetros**
+
+Para analizar el impacto de los hiperparámetros en el desempeño de las redes neuronales PINN, se realizaron **45 experimentos** utilizando una estrategia de búsqueda aleatoria (*random search*).
+
+Los siguientes hiperparámetros fueron seleccionados para su variación:
+
+- **Número de neuronas por capa**: entre **4** y **10**.
+- **Número de capas ocultas**: entre **4** y **5**.
+- **Número de puntos de muestreo**: entre **500** y **3000**.
+- **Pesos de penalización** para la ecuación diferencial (**$\lambda_0$**) y las condiciones de contorno (**$\lambda_1$**, **$\lambda_2$**): entre **1** y **10**.
+
+Además, se realizó un experimento con una configuración base que empleaba los siguientes valores predeterminados:
+
+| Hiperparámetro | Valor |
+|----------------|-------|
+| Número de neuronas | 10 |
+| Número de capas | 5 |
+| Puntos de muestreo | 2000 |
+| $\lambda_0$ | 5 |
+| $\lambda_1$ | 7 |
+| $\lambda_2$ | 7 |
+
+Cada configuración se entrenó durante **400 épocas** utilizando el optimizador **Adam** con una tasa de aprendizaje fija de **$1\times10^{-3}$**.
+
+Los resultados de los experimentos fueron evaluados en términos del **error relativo** y el **costo computacional**, medido como el porcentaje de uso de CPU durante la ejecución. Esta evaluación permite comparar la precisión y la eficiencia computacional de cada configuración de hiperparámetros.
 
 **Comparación y Selección del Mejor Modelo**  
 Se seleccionó la arquitectura con **mejor precisión** y **menor costo computacional**.  
