@@ -23,7 +23,6 @@ limInf = 0  # Límite inferior del dominio de la solución
 limSup = np.pi  # Límite superior del dominio de la solución
 iterations = 3 # epocas por experimento
 
-
 def makeModel(neurons, nLayers, activation):
     """
     Construye un modelo de red neuronal profunda basado en una PINN (Physics-Informed Neural Network).
@@ -51,6 +50,7 @@ def makeModel(neurons, nLayers, activation):
 
     # Construcción del modelo
     return keras.Model(inputs=xVals, outputs=output, name='u_model')
+    
 class Loss1(keras.layers.Layer):
     def __init__(self, uModel, nPts, f, lambda0=1, lambda1=1, lambda2=1, limInf=0, limSup=np.pi, A=0, B=0, **kwargs):
         super(Loss1, self).__init__()
@@ -98,8 +98,6 @@ class Loss1(keras.layers.Layer):
         # ✅ Convertir la salida a tensor para evitar errores en Keras
         return tf.convert_to_tensor(errorPDE + bc, dtype=tf.float32)
 
-
-
 class RelativeErrorCallback(tf.keras.callbacks.Callback):
     """
     Callback personalizado para calcular el error relativo en norma H¹ al final de cada época.
@@ -143,7 +141,6 @@ class RelativeErrorCallback(tf.keras.callbacks.Callback):
 
         # 🔹 Guardamos el error relativo en los logs del entrenamiento
         logs['relative_error'] = relative_error
-
 
 def makeLossModel1(uModel, nPts, f, lambda0=1, lambda1=1, lambda2=1, limInf=0, limSup=np.pi, A=0, B=0,):
     """
@@ -192,9 +189,7 @@ def trickyLoss(yPred, yTrue):
     """
     return yTrue
 
-
 ## INICIALIZAR CARPETAS Y EXCEL ## 
-
 
 def crear_estructura_directorios(base_path="resultados/PLANTEAMIENTO 1"):
     """
@@ -207,7 +202,6 @@ def crear_estructura_directorios(base_path="resultados/PLANTEAMIENTO 1"):
     - base_path (str): Ruta base de los experimentos.
     - graficas_path (str): Ruta donde se guardarán las gráficas generadas.
     """
-
     try:
         # 📌 Verificar si la ruta ya existe
         if os.path.exists(base_path):
@@ -230,7 +224,6 @@ def crear_estructura_directorios(base_path="resultados/PLANTEAMIENTO 1"):
     except Exception as e:
         print(f"❌ Error al crear directorios: {e}")
         return None, None  # Retornar None en caso de error
-
 
 def inicializar_excel(file_path="resultados/PLANTEAMIENTO 1/resultados.xlsx"):
     """
@@ -259,7 +252,6 @@ def inicializar_excel(file_path="resultados/PLANTEAMIENTO 1/resultados.xlsx"):
     
     return file_path
 
-
 # Función para obtener los hiperparámetros por defecto
 def hiperparametros_por_defecto_1():
     """
@@ -277,7 +269,6 @@ def hiperparametros_por_defecto_1():
         "lambda1": 5,  # Peso del error en el contorno inferior
         "lambda2": 4   # Peso del error en el contorno superior
     }
-
 
 def medir_costo_computacional(funcion_entrenamiento, *args, **kwargs):
     """
@@ -305,9 +296,6 @@ def medir_costo_computacional(funcion_entrenamiento, *args, **kwargs):
     - elapsed_time (float): Tiempo total transcurrido en segundos.
         
     """
-
-
-
     process = psutil.Process(os.getpid())  # Obtener el proceso actual
 
     # 🔹 Medir el tiempo de CPU y tiempo real antes del entrenamiento
@@ -333,7 +321,6 @@ def medir_costo_computacional(funcion_entrenamiento, *args, **kwargs):
     cpu_percent = (cpu_time_used / (elapsed_time * num_cpus)) * 100 if elapsed_time > 0 else 0 
 
     return cpu_percent, elapsed_time
-
 
 def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
     """
@@ -391,7 +378,6 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
         np.array([1.]), np.array([1.]), epochs=iterations, verbose=0, callbacks=[relative_error_callback]
     )
 
-
     # 🔹 Generar puntos en el dominio para evaluar la solución entrenada
     xList = np.array([np.pi / 1000 * i for i in range(1000)])
 
@@ -430,8 +416,6 @@ def ejecutar_entrenamientos(func, n_resultados=6):
     num_lotes = min(len(func), n_resultados)  
     lote_size = n_resultados // num_lotes  # 📌 Número de experimentos por lote
 
- 
-
     # 📌 Lista para almacenar resultados
     resultados = []
     # 🔹  Se determinan los parámetros
@@ -445,7 +429,6 @@ def ejecutar_entrenamientos(func, n_resultados=6):
         for j in range(lote_size):
             experimento_id = i * lote_size + j + 1
             print(f"   ▶ Ejecutando experimento {experimento_id}...")
-
 
             # 🔹 Entrenar la PINN con la configuración actual
             error_relativo, costo_computacional, history, uModel, xList = train_PINN(hiperparametros, f_rhs, exactU) #Esta bien.
@@ -496,9 +479,6 @@ funciones_experimentos = [
 
 # 🔹 Convertir el diccionario en una lista de tuplas
 func = [(exp['fRhs'], exp['exactU']) for exp in funciones_experimentos]
-
-
-
 
 def guardar_resultados_excel(resultados, funciones_experimentos, file_path="resultados/PLANTEAMIENTO 1/resultados.xlsx"):
     """
@@ -625,7 +605,6 @@ def seleccionar_experimentos(resultados):
     print("✔ Experimentos listos para generar gráficas.")
     return todos_experimentos
 
-
 def generar_graficas(experimentos, resultados, graficas_path):
     """
     Genera y guarda las gráficas de los experimentos en una carpeta específica.
@@ -658,9 +637,6 @@ def generar_graficas(experimentos, resultados, graficas_path):
 
     print(f"✔ Todas las gráficas generadas en {graficas_path}.")
 
-
-
-
 # 🔹 Paso 1: Configuración inicial (Crear directorios y archivo Excel)
 print("📂 Configurando estructura de almacenamiento...")
 base_path, graficas_path = crear_estructura_directorios()
@@ -669,7 +645,6 @@ excel_file = inicializar_excel()
 # 🔹 Paso 2: Ejecutar experimentos
 print("🚀 Ejecutando experimentos...")
 resultados_experimentos = ejecutar_entrenamientos(func, 9)
-
 
 # 🔹 Paso 3: Seleccionar los experimentos para graficar
 print("📊 Seleccionando experimentos para generación de gráficas...")
