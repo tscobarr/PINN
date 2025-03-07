@@ -326,7 +326,7 @@ def medir_costo_computacional(funcion_entrenamiento, *args, **kwargs):
 
     return cpu_percent, elapsed_time
 
-def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
+def train_PINN(hiperparametros, funcion_referencia, funcion_exacta, u_0=0, u_pi=0):
     """
     Entrena la PINN con los hiperparámetros dados y la función de referencia seleccionada.
 
@@ -356,8 +356,8 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
     )
 
     # 📌 Calcular valores exactos en los bordes (x = 0 y x = π)
-    A = 0 #funcion_exacta(tf.convert_to_tensor(0.0, dtype=dtype))  # 📌 Se asegura de que x sea un tensor
-    B = 0 #funcion_exacta(tf.convert_to_tensor(np.pi, dtype=dtype)) 
+    A = u_0#funcion_exacta(tf.convert_to_tensor(0.0, dtype=dtype))  # 📌 Se asegura de que x sea un tensor
+    B = u_pi #funcion_exacta(tf.convert_to_tensor(np.pi, dtype=dtype)) 
 
     # 🔹 Definir el modelo de pérdida basado en la ecuación diferencial
     lossModel = makeLossModel1(
