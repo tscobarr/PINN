@@ -344,9 +344,6 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta, u_0=0, u_pi=
     - uModel (keras.Model): Modelo entrenado de la PINN.
     - xList (array): Puntos en el dominio donde se evaluó la solución.
     """
-    # 🔹 Medir tiempo de CPU antes del entrenamiento
-    process = psutil.Process(os.getpid())
-    cpu_times_before = process.cpu_times()
 
     # 🔹 Construcción del modelo de red neuronal PINN
     uModel = makeModel(
@@ -387,9 +384,6 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta, u_0=0, u_pi=
 
     # 🔹 Evaluar la solución aproximada y compararla con la solución exacta
     error_relativo = history.history['relative_error'][-1].numpy()
-
-    # 🔹 Medir tiempo de CPU después del entrenamiento
-    cpu_times_after = process.cpu_times()
 
     # 🔹 Calcular tiempo total de CPU usado (sumando usuario y sistema)
     cpu_cost, _ = medir_costo_computacional(
