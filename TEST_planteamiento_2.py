@@ -14,15 +14,12 @@ import time
 keras.utils.set_random_seed(1234)  # Fija una semilla para asegurar resultados reproducibles
 dtype = 'float32'  # Establece la precisión de los cálculos
 keras.backend.set_floatx(dtype)  # Aplica el tipo de dato definido
-# Definición de parámetros globales
 
+# Definición de parámetros globales
 alpha = 1  # Parámetro utilizado en las ecuaciones diferenciales
 limInf = 0  # Límite inferior del dominio de la solución
 limSup = np.pi  # Límite superior del dominio de la solución
 iterations = 400 # epocas por experimento
-
-
-
 
 def makeModel2(neurons, nLayers, activation, limInf=0, limSup=np.pi):
     """
@@ -52,8 +49,7 @@ def makeModel2(neurons, nLayers, activation, limInf=0, limSup=np.pi):
     
     uModel = keras.Model(inputs=xVals, outputs=output, name='u_model')
     return uModel
-
-
+    
 class Loss2(keras.layers.Layer):
     """
     Capa personalizada para calcular la pérdida en el Planteamiento 2.
@@ -82,7 +78,6 @@ class Loss2(keras.layers.Layer):
         errorPDE = keras.ops.mean((-duxx + alpha * u - self.f(x)) ** 2)
         return errorPDE
 
-
 def makeLossModel2(uModel, nPts, f, limInf=0, limSup=np.pi):
     """
     Crea el modelo de pérdida basado en la ecuación diferencial para el Planteamiento 2.
@@ -108,8 +103,6 @@ def makeLossModel2(uModel, nPts, f, limInf=0, limSup=np.pi):
     lossModel = keras.Model(inputs=xVals, outputs=loss_output)
 
     return lossModel
-
-
 
 class RelativeErrorCallback(tf.keras.callbacks.Callback):
     """
@@ -239,7 +232,6 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
         lossModel.fit, np.array([1.]), np.array([1.]), epochs=iterations, verbose=0, callbacks=[relative_error_callback]
     )
 
-
     # 🔹 Generar puntos en el dominio para evaluar la solución entrenada
     xList = np.linspace(limInf, limSup, 1000)
 
@@ -302,7 +294,7 @@ def ejecutar_experimentos(funciones_experimentos, n_experimentos=45):
 
             error_relativo, cpu_cost, history, uModel, xList = train_PINN(hiperparametros, f_rhs, exactU)
 
-            print(f"      🔹 Completado - Error relativo: {error_relativo:.5f}, Uso CPU: {cpu_cost:.2f}%")
+            print(f"🔹 Completado - Error relativo: {error_relativo:.5f}, Uso CPU: {cpu_cost:.2f}%")
 
             resultados.append([
                 experimento_id, 
@@ -359,7 +351,6 @@ funciones_experimentos = [
 # 🔹 Convertir el diccionario en una lista de tuplas
 func = [(exp['fRhs'], exp['exactU']) for exp in funciones_experimentos]
 
-
 def hiperparametros_por_defecto():
     """
     Devuelve un diccionario con valores predeterminados para los hiperparámetros de la PINN.
@@ -389,7 +380,6 @@ def crear_estructura_directorios(base_path="experimentos/PLANTEAMIENTO_2"):
     os.makedirs(graficas_path, exist_ok=True)
 
     return base_path, graficas_path
-
 
 def plot_results(uModel, history, exactU, xList, exp_folder):
     """
@@ -451,8 +441,6 @@ def plot_results(uModel, history, exactU, xList, exp_folder):
         plt.tight_layout()
         plt.savefig(os.path.join(exp_folder, "error_relativo.png"), dpi=300)
         plt.close()
-
-
 
 def seleccionar_experimentos(resultados):
     """
@@ -581,8 +569,6 @@ def flujo_experimentos_planteamiento_2():
     print("📊 Seleccionando experimentos para generación de gráficas...")
     experimentos_seleccionados = seleccionar_experimentos(resultados_experimentos)
 
-
-
     print("📈 Generando gráficas...")
     generar_graficas(experimentos_seleccionados, resultados_experimentos, graficas_path)
 
@@ -590,6 +576,5 @@ def flujo_experimentos_planteamiento_2():
     guardar_resultados_excel(resultados_experimentos, funciones_experimentos=funciones_experimentos)
 
     print("✅ Proceso finalizado exitosamente.")
-
 
 flujo_experimentos_planteamiento_2()
