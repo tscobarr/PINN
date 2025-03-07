@@ -222,6 +222,3 @@ Se seleccionó la arquitectura con **mejor precisión** y **menor costo computac
 - Se entrena la red neuronal y se evalúa el desempeño comparando con la solución exacta.  
 
 **Nota**: **tricky loss** en ambos casos es simplemente **return yTrue**, lo que significa que la optimización no se realiza directamente sobre la pérdida calculada en la ecuación diferencial. Esto permite el uso de otro **modelo auxiliar** que corrige el error del primero.
-
-## Conclusiones y Trabajo Futuro
-(Se deben agregar las conclusiones y las posibles direcciones futuras de la investigación).
