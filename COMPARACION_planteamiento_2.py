@@ -21,9 +21,6 @@ limInf = 0  # Límite inferior del dominio de la solución
 limSup = np.pi  # Límite superior del dominio de la solución
 iterations = 5 # epocas por experimento
 
-
-
-
 def makeModel2(neurons, nLayers, activation, limInf=0, limSup=np.pi):
     """
     Crea el modelo de la PINN con condiciones de frontera impuestas.
@@ -53,7 +50,6 @@ def makeModel2(neurons, nLayers, activation, limInf=0, limSup=np.pi):
     uModel = keras.Model(inputs=xVals, outputs=output, name='u_model')
     return uModel
 
-
 class Loss2(keras.layers.Layer):
     """
     Capa personalizada para calcular la pérdida en el Planteamiento 2.
@@ -82,7 +78,6 @@ class Loss2(keras.layers.Layer):
         errorPDE = keras.ops.mean((-duxx + alpha * u - self.f(x)) ** 2)
         return errorPDE
 
-
 def makeLossModel2(uModel, nPts, f, limInf=0, limSup=np.pi):
     """
     Crea el modelo de pérdida basado en la ecuación diferencial para el Planteamiento 2.
@@ -108,8 +103,6 @@ def makeLossModel2(uModel, nPts, f, limInf=0, limSup=np.pi):
     lossModel = keras.Model(inputs=xVals, outputs=loss_output)
 
     return lossModel
-
-
 
 class RelativeErrorCallback(tf.keras.callbacks.Callback):
     """
@@ -237,7 +230,6 @@ def train_PINN(hiperparametros, funcion_referencia, funcion_exacta):
     # 🔹 Evaluar la solución aproximada y compararla con la solución exacta
     error_relativo = history.history.get('relative_error', [np.nan])[-1]
 
-
     # 🔹 Medir el porcentaje de CPU utilizado durante el entrenamiento
     cpu_cost, _ = medir_costo_computacional(
         lossModel.fit, np.array([1.]), np.array([1.]), epochs=iterations, verbose=0, callbacks=[relative_error_callback]
@@ -355,7 +347,6 @@ funciones_experimentos = [
 # 🔹 Convertir el diccionario en una lista de tuplas
 func = [(exp['fRhs'], exp['exactU']) for exp in funciones_experimentos]
 
-
 def crear_estructura_directorios(base_path="resultados/PLANTEAMIENTO_2"):
     """
     Crea la estructura de directorios para almacenar los resultados de los experimentos.
@@ -373,7 +364,6 @@ def crear_estructura_directorios(base_path="resultados/PLANTEAMIENTO_2"):
 
     return base_path, graficas_path
 
-
 def plot_results(uModel, history, exactU, xList, exp_folder):
     """
     Genera y guarda las gráficas de un experimento, asegurando que se use la función exacta correcta.
@@ -388,7 +378,6 @@ def plot_results(uModel, history, exactU, xList, exp_folder):
     Retorna:
     - None
     """
-
     rcParams['font.family'] = 'serif'
     rcParams['font.size'] = 14
     rcParams['legend.fontsize'] = 12
@@ -434,8 +423,6 @@ def plot_results(uModel, history, exactU, xList, exp_folder):
         plt.tight_layout()
         plt.savefig(os.path.join(exp_folder, "error_relativo.png"), dpi=300)
         plt.close()
-
-
 
 def seleccionar_experimentos(resultados):
     """
@@ -503,7 +490,6 @@ def guardar_resultados_excel(resultados_experimentos, funciones_experimentos, ca
     Retorna:
     - None
     """
-
     # 📌 Asegurar que la carpeta de destino existe
     os.makedirs(carpeta, exist_ok=True)
     
@@ -564,8 +550,6 @@ def flujo_experimentos_planteamiento_2():
     print("📊 Seleccionando experimentos para generación de gráficas...")
     experimentos_seleccionados = seleccionar_experimentos(resultados_experimentos)
 
-
-
     print("📈 Generando gráficas...")
     generar_graficas(experimentos_seleccionados, resultados_experimentos, graficas_path)
 
@@ -573,6 +557,5 @@ def flujo_experimentos_planteamiento_2():
     guardar_resultados_excel(resultados_experimentos, funciones_experimentos=funciones_experimentos)
 
     print("✅ Proceso finalizado exitosamente.")
-
 
 flujo_experimentos_planteamiento_2()
