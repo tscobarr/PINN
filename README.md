@@ -4,7 +4,7 @@
 
 Las ecuaciones diferenciales son fundamentales en la modelación de sistemas físicos, pero su resolución mediante métodos numéricos tradicionales puede ser costosa y compleja. Las Redes Neuronales Informadas por la Física (PINN) han emergido como una alternativa innovadora, integrando el conocimiento físico directamente en el proceso de aprendizaje de la red.
 
-Este proyecto compara dos planteamientos distintos para el diseño y entrenamiento de PINNs, con el objetivo de determinar cuál ofrece mejor rendimiento en términos de precisión y eficiencia computacional.
+Este proyecto compara dos planteamientos distintos para el diseño y entrenamiento de PINN, con el objetivo de determinar cuál ofrece mejor rendimiento en términos de precisión y eficiencia computacional.
 
 ## **Marco teórico**
 
@@ -17,9 +17,9 @@ Las redes neuronales artificiales (RNA) son modelos computacionales inspirados e
 Las PINNs son una variante de redes neuronales diseñadas para resolver ecuaciones diferenciales parciales. A diferencia de las redes tradicionales, integran información física en su función de pérdida para garantizar que las soluciones obtenidas cumplan con las ecuaciones diferenciales y sus condiciones de frontera.
 El entrenamiento de una PINN implica definir una ecuación diferencial como parte de la función de pérdida, evaluar la red en múltiples puntos del dominio y optimizar los parámetros para minimizar el error en la predicción.
 
-### 3. Métodos implementados en PINNs
+### 3. Métodos implementados en PINN
 
-Se han desarrollado dos enfoques principales para la implementación de PINNs:
+Se han desarrollado dos enfoques principales para la implementación de PINN:
 
 1. **Incorporación directa de la ecuación diferencial**: Se integra la ecuación diferencial y las condiciones de frontera en la función de pérdida. La red neuronal se entrena minimizando esta función.
 
@@ -58,27 +58,29 @@ El error relativo es útil cuando se comparan soluciones en diferentes escalas, 
 ## **Planteamiento del problema**
 Los métodos tradicionales para resolver ecuaciones diferenciales requieren discretización y altos recursos computacionales. Las PINNs han surgido como una alternativa viable, integrando las ecuaciones diferenciales en el proceso de entrenamiento de redes neuronales. Sin embargo, existen múltiples estrategias para implementar las PINNs, y la elección del enfoque adecuado puede impactar significativamente la precisión y eficiencia computacional.
 
-En este estudio, se comparan dos metodologías para entrenar PINNs:
+En este estudio, se comparan dos metodologías para entrenar PINN:
 1. **Incorporación directa de la ecuación diferencial en la función de pérdida**.
 2. **Reformulación de la solución para satisfacer automáticamente las condiciones de frontera**.
 
 La pregunta clave que este estudio busca responder es:  
 
-**¿Cuál de estos dos enfoques proporciona una mejor aproximación en términos de precisión y eficiencia computacional al resolver el siguiente sistema de ecuaciones?**  
+**¿Cuál de estos dos enfoques proporciona una mejor aproximación en términos de precisión y eficiencia computacional al resolver el siguiente problema de valores de frontera?**  
 
 $$\begin{cases}
   -\Delta u + \alpha u = f, & x \in (0,\pi) \\
   u = g, & x \in \{ 0, \pi \}
 \end{cases}$$
 
+donde $u(x)$ es la solución, $\Delta$ es el operador Laplaciano, $\alpha$ es un parámetro, $f(x)$ es una función fuente y $g(x)$ son las condiciones de frontera.
+
 ## **Objetivos**
 
 ### Objetivo general
 
-Comparar dos planteamientos distintos para entrenar redes neuronales PINN y evaluar su desempeño en la resolución de ecuaciones diferenciales.
+Comparar dos planteamientos distintos para entrenar redes neuronales informadas por la física y evaluar su desempeño en la resolución del problema con valores de frontera propuesto con la finalidad de determinar cuál enfoque ofrece mejor precisión y eficiencia computacional.
 
 ### Objetivos específicos
-- Implementar dos arquitecturas diferentes de PINNs.
+- Implementar dos arquitecturas diferentes de PINN.
 - Resolver un conjunto de ecuaciones diferenciales mediante cada planteamiento.
 - Evaluar la precisión de los resultados mediante el error cuadrático medio (L² error).
 - Analizar el costo computacional de cada enfoque.
@@ -195,7 +197,7 @@ Se seleccionó la arquitectura con **mejor precisión** y **menor costo computac
   - Se genera una red neuronal con capas densas y activación `tanh`.  
   - Se **garantiza que la solución cumple automáticamente las condiciones de frontera** multiplicando la salida por una función de contorno:
       
-    $$u_{NN}(x) = NN(x) \cdot (x - x_{\text{min}}) \cdot (x - x_{\text{max}})$$
+    $$u_{NN}(x) = NN(x) \cdot x \cdot (x - \pi)$$
     
 - `Loss2`:  
   - Define la **función de pérdida**, incorporando la ecuación diferencial.  
